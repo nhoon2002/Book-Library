@@ -1,5 +1,4 @@
 //Initialize Firebase
-
 var config = {
   apiKey: "AIzaSyDnE8O14I4Tm0hdG0WIL1ZAXZRGKEnr2yc",
   authDomain: "fir-tester-5e288.firebaseapp.com",
@@ -9,13 +8,15 @@ var config = {
 };
 
 firebase.initializeApp(config);
-var currentUser = "nate";
+
+//Initializes current user to pass through for the purpose of firebase node; (unable to process an empty string as node name for logged-out phase)
+var currentUser = "not logged in";
 // Create a variable to reference the database
 var database = firebase.database();
-
-// Login
+var refer = database.ref(currentUser).
+// When you click login...
 $('.loginButton').on("click" , function(event) {
-   event.preventDefault();
+   event.preventDefault(); //Don't know why, but this is necessary for the code to work.
 
    currentUser = $('#userName').val().trim();
    console.log(currentUser);
@@ -27,7 +28,7 @@ $('.loginButton').on("click" , function(event) {
 
 
 
-
+//when you click on the add book button -- TODO change to: when you click on book icon
 $('#addBookBtn').on('click', function() {
 
    var inputName = $('#bookNameInput').val().trim();
@@ -71,12 +72,28 @@ database.ref(currentUser).on("child_added", function(childSnapshot, prevChildKey
 
 
 });
+database.ref(currentUser).on("child_removed", function(childSnapshot, prevChildKey){
+
+   console.log(childSnapshot.val());
+
+   var inputName = childSnapshot.val().name;
+   var inputAuth = childSnapshot.val().author;
+   var inputISBN = childSnapshot.val().isbn;
+   var inputPub = childSnapshot.val().publisher;
 
 
 
-// $('#clearBookBtn').on("click", function() {
-//    database.ref('User').child.remove();
-// });
+   $("#bookTable > tbody").append("<tr><td>" + inputName + "</td><td>" + inputAuth + "</td><td>" + inputISBN + "</td><td>" + inputPub + "</td></tr>");
+
+
+});
+
+
+$('#clearBookBtn').on("click", function() {
+    database.ref(currentUser).child(name).remove();
+
+    return false;
+});
 
 
 $('#clearLibraryBtn').on("click", function() {
